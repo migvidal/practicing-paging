@@ -1,6 +1,12 @@
 package com.migvidal.myfirstpaging
 
 object Injection {
-    //val apiService = TODO()
-    val repository = FakeRepository()
+    val repository = run {
+        if (BuildConfig.BUILD_TYPE == "mocked") {
+            FakeRepository()
+        } else {
+            val wikipediaApiService: WikipediaApiService by lazy { createApiService() }
+            NetworkRepository(wikipediaApiService)
+        }
+    }
 }

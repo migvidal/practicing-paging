@@ -1,13 +1,15 @@
 package com.migvidal.myfirstpaging
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
     private val _data: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
@@ -15,8 +17,10 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         get() = _data.asStateFlow()
 
     private fun fetchData() {
-        _data.update {
-            repository.getData()
+        viewModelScope.launch {
+            _data.update {
+                repository.getResultTitles()
+            }
         }
     }
 

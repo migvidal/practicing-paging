@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,9 +26,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
             TopAppBar(title = { Text(text = stringResource(R.string.app_name)) })
         }
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier.padding(innerPadding)) {
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             items(items = data) { item ->
-                Text(item)
+                Text(text=item, modifier = Modifier.padding(16.dp))
             }
         }
     }

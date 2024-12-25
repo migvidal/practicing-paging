@@ -1,19 +1,23 @@
 package com.migvidal.myfirstpaging
 
+import kotlinx.serialization.json.Json
+
 interface Repository {
-    fun getData(): List<String>
+    suspend fun getResultTitles(): List<String>
 }
 
-class NetworkRepository(val networkApiService: NetworkApiService) : Repository {
-    override fun getData(): List<String> {
-        return networkApiService.getData()
+class NetworkRepository(val wikipediaApiService: WikipediaApiService) : Repository {
+    override suspend fun getResultTitles(): List<String> {
+        val searchResponse = wikipediaApiService.getSearch()
+        return searchResponse.query.search.map { it.title }
     }
 }
 
 class FakeRepository : Repository {
-    override fun getData(): List<String> {
-        return (1..40).map {
-            "Item $it"
-        }
+    override suspend fun getResultTitles(): List<String> {
+        val jsonCoder = Json { ignoreUnknownKeys = true }
+        val searchResponse = jsonCoder.decodeFromString<SearchResponse>(fakeApiResponse)
+        val results = searchResponse.query.search.map { it.title }
+        return results
     }
 }
