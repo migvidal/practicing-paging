@@ -1,18 +1,24 @@
 package com.migvidal.myfirstpaging
 
+import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-private val WIKIPEDIA_BASE_URL = "https://en.wikipedia.org/"
+private const val WIKIPEDIA_BASE_URL = "https://en.wikipedia.org/"
+
+private val jsonCoder = Json { ignoreUnknownKeys = true }
 
 fun createApiService(): WikipediaApiService {
     val paramsInterceptor = Interceptor { chain ->
         var request = chain.request()
-        val newUrl = request.url().newBuilder()
-            .addPathSegments("")
+        val newUrl = request.url.newBuilder()
+            .addPathSegments("w/api.php")
             .addQueryParameter("action", "query")
             .addQueryParameter("format", "json")
             .build()
@@ -21,12 +27,20 @@ fun createApiService(): WikipediaApiService {
             .build()
         chain.proceed(request)
     }
+    val loggingInterceptor =
+        HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC }
     val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(paramsInterceptor)
+        .addInterceptor(loggingInterceptor)
         .build()
     val retrofit = Retrofit.Builder()
         .baseUrl(WIKIPEDIA_BASE_URL)
         .client(okHttpClient)
+        .addConverterFactory(
+            jsonCoder.asConverterFactory(
+                "application/json; charset=UTF8".toMediaType()
+            )
+        )
         .build()
     return retrofit.create(WikipediaApiService::class.java)
 }
@@ -34,7 +48,7 @@ fun createApiService(): WikipediaApiService {
 interface WikipediaApiService {
     @GET("/")
     suspend fun getSearch(
-        @Query("srsearch") query: String = "sonny",
+        @Query("srsearch") query: String = "moore",
         @Query("srlimit") resultLimit: Int = 60,
         @Query("list") list: String = "search"
     ): SearchResponse

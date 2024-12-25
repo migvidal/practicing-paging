@@ -5,12 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchResponse(
-    @SerialName("batchcomplete") val batchComplete: String = "",
+    @SerialName("batchcomplete")
+    val batchComplete: String = "",
     val query: SearchQuery = SearchQuery()
 ) {
     @Serializable
     data class SearchQuery(
-        @SerialName("searchinfo") val searchInfo: SearchInfo = SearchInfo(),
+        @SerialName("searchinfo")
+        val searchInfo: SearchInfo = SearchInfo(),
         val search: List<Search> = listOf()
     ) {
         @Serializable
@@ -25,11 +27,14 @@ data class SearchResponse(
         data class Search(
             val ns: Int,
             val title: String,
-            @SerialName("pageid") val pageId: Int,
+            @SerialName("pageid")
+            val pageId: Int,
             val size: Int,
-            @SerialName("wordcount") val wordCount: Int,
+            @SerialName("wordcount")
+            val wordCount: Int,
             val snippet: String,
-            @SerialName("timestamp") val timeStamp: String
+            @SerialName("timestamp")
+            val timeStamp: String
         )
     }
 
