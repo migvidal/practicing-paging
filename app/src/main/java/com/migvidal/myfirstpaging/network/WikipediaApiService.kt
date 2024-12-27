@@ -1,5 +1,7 @@
-package com.migvidal.myfirstpaging
+package com.migvidal.myfirstpaging.network
 
+import com.migvidal.myfirstpaging.data.ITEMS_PER_PAGE
+import com.migvidal.myfirstpaging.model.SearchResponse
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -48,8 +50,9 @@ fun createApiService(): WikipediaApiService {
 interface WikipediaApiService {
     @GET("/")
     suspend fun getSearch(
-        @Query("srsearch") query: String = "moore",
-        @Query("srlimit") resultLimit: Int = 60,
-        @Query("list") list: String = "search"
+        @Query("srsearch") query: String,
+        @Query("srlimit") resultLimit: Int,
+        @Query("list") list: String = "search",
+        @Query("sroffset") searchResultOffset: Int = 0
     ): SearchResponse
 }

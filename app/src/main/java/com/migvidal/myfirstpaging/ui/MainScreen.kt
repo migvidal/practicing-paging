@@ -1,4 +1,4 @@
-package com.migvidal.myfirstpaging
+package com.migvidal.myfirstpaging.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,26 +9,31 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.migvidal.myfirstpaging.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    val viewModel: MainViewModel = viewModel(factory = MainViewModel.factory)
-    val data = viewModel.data.collectAsState().value
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(title = { Text(text = stringResource(R.string.app_name)) })
         }
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            items(items = data) { item ->
-                Text(text=item, modifier = Modifier.padding(16.dp))
+        val viewModel: MainViewModel = viewModel(factory = MainViewModel.factory)
+        val data = viewModel.data.collectAsLazyPagingItems()
+        if (data.itemCount == 0) return@Scaffold
+        val results = data[0]?.query?.search ?: emptyList()
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
+            items(results) {
+                Text(text = it.title, modifier = Modifier.padding(16.dp))
             }
         }
     }

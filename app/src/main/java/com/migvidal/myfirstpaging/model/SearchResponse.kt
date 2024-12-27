@@ -1,14 +1,22 @@
-package com.migvidal.myfirstpaging
+package com.migvidal.myfirstpaging.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @Serializable
 data class SearchResponse(
     @SerialName("batchcomplete")
     val batchComplete: String = "",
-    val query: SearchQuery = SearchQuery()
+    val `continue`: Continue? = null,
+    val query: SearchQuery = SearchQuery(),
+    val id: String = Uuid.toString(),
 ) {
+    @Serializable
+    data class Continue(val sroffset: Int, val `continue`: String)
+
     @Serializable
     data class SearchQuery(
         @SerialName("searchinfo")
@@ -17,9 +25,6 @@ data class SearchResponse(
     ) {
         @Serializable
         data class SearchInfo(
-            /**
-             * Number of results found. Zero if nothing was found
-             */
             @SerialName("totalhits") val totalHits: Int = 0
         )
 

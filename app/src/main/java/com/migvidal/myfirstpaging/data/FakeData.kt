@@ -1,4 +1,4 @@
-package com.migvidal.myfirstpaging
+package com.migvidal.myfirstpaging.data
 
 val fakeApiResponse = """
     {
